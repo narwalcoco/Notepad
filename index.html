@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="icon" href="google_keep.png" type="image/x-icon">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notepad</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <header>
+    <h1>Note Editor</h1>
+  </header>
+
+  <div class="toolbar">
+    <button data-action="bold">Bold</button>
+    <button data-action="italic">Italic</button>
+    <button data-action="header">Header</button>
+    <button data-action="list">List</button>
+    <button data-action="code">Code</button>
+    <button data-action="link">Link</button>
+  </div>
+
+  <main class="editor-container">
+    <div class="editor-panel">
+      <input id="noteTitle" type="text" placeholder="Enter note title..." class="title-input">
+      <textarea id="noteInput" placeholder="Write your markdown note here..."></textarea>
+    </div>
+    <div class="preview-panel">
+      <div id="markdownPreview" class="preview-box">Live preview will appear here...</div>
+    </div>
+  </main>
+
+  <div class="buttons">
+    <button id="saveBtn">Save</button>
+    <button id="uploadBtn">Upload Markdown</button>
+    <button id="viewNotesBtn">View Saved Notes</button>
+  </div>
+  <input type="file" id="fileInput" accept=".md" style="display:none;">
+
+  <!-- Popup -->
+  <div id="popup" class="popup">
+    <div class="popup-content">
+      <h2>Save Options</h2>
+      <p>You can save this note locally in your browser or download it as a Markdown (.md) file.</p>
+      <p><strong>Note:</strong> Clearing browser data will delete locally saved notes.</p>
+      <div class="popup-buttons">
+        <button id="saveLocalBtn">Save to Browser</button>
+        <button id="downloadBtn">Download .MD File</button>
+        <button id="closePopupBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // Always clear editing state when leaving the page
+    window.addEventListener('beforeunload', () => {
+      localStorage.removeItem('editingNote');
+    });
+
+    // Secret delete all logic
+    document.addEventListener('DOMContentLoaded', () => {
+      let secretBuffer = "";
+      let secretTimer = null;
+      const SECRET_PHRASE = "delete all";
+
+      function resetSecretBuffer() {
+        secretBuffer = "";
+        if (secretTimer) { clearTimeout(secretTimer); secretTimer = null; }
+      }
+
+      function startSecretTimer() {
+        if (secretTimer) clearTimeout(secretTimer);
+        secretTimer = setTimeout(() => resetSecretBuffer(), 5000);
+      }
+
+      document.addEventListener('click', (ev) => {
+        const tag = (ev.target && ev.target.tagName) ? ev.target.tagName.toLowerCase() : '';
+        const isInteractive = ['input', 'textarea', 'select', 'button', 'a'].includes(tag) || ev.target.isContentEditable;
+        if (!isInteractive) {
+          resetSecretBuffer();
+          startSecretTimer();
+        } else {
+          resetSecretBuffer();
+        }
+      });
+
+      document.addEventListener('keydown', (ev) => {
+        const active = document.activeElement;
+        const activeTag = active && active.tagName ? active.tagName.toLowerCase() : '';
+        const isEditing = activeTag === 'input' || activeTag === 'textarea' || active.isContentEditable;
+        if (isEditing) return;
+        if (!ev.shiftKey) return;
+
+        if (ev.key.length === 1) {
+          secretBuffer += ev.key.toLowerCase();
+          startSecretTimer();
+        } else if (ev.key === 'Backspace') {
+          secretBuffer = secretBuffer.slice(0, -1);
+          startSecretTimer();
+        } else if (ev.key === 'Escape') {
+          resetSecretBuffer();
+          return;
+        } else {
+          return;
+        }
+
+        if (secretBuffer.endsWith(SECRET_PHRASE)) {
+          resetSecretBuffer();
+          if (confirm('Delete ALL app data (notes and editing state) from this browser? This cannot be undone.')) {
+            localStorage.removeItem('notes');
+            localStorage.removeItem('editingNote');
+            alert('All notes deleted from localStorage.');
+            location.reload();
+          }
+        }
+      });
+    });
+  </script>
+
+  <div id="updatePopup" class="update-popup">
+    <div class="update-popup-content">
+      <h2>Updates & Fixes</h2>
+      <p>We’ve improved your notes app with some handy updates:</p>
+      <ul style="text-align:left;">
+        <li>Notes now show the first 10 lines in proper Markdown format (headers, bold, italics, etc.).</li>
+        <li>Unedited notes are cleared on the editor page when you leave the editor page, so you always start fresh.</li>
+        <li>Fixed the “No saved notes” message so it centers correctly after deleting all notes.</li>
+        <li>Added this one-time announcement popup to keep you informed of new features and fixes.</li>
+      </ul>
+      <button id="yayBtn">Yay!</button>
+    </div>
+  </div>
+
+</body>
+
+</html>
