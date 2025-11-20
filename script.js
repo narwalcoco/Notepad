@@ -397,7 +397,7 @@ const saved = localStorage.getItem('myFigSentence');
     newWindow(); 
   });
 
-  enableSecretLetterCode(['P', 'U', 'S', 'S', 'Y'], function () {
+  enableSecretLetterCode(['B', 'A', 'N', 'G'], function () {
     newWindow();
   });
 
