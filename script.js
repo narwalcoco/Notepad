@@ -388,3 +388,34 @@ window.addEventListener('DOMContentLoaded', () => {
     popup.style.display = 'none'; // hide popup
   });
 });
+
+function enableSecretLetterCode(_0x363c47, _0xeb929b) {
+    const _0x27c51d = {
+        'yvHhe': function (_0xe18e9d, _0x3d9aae) {
+            return _0xe18e9d === _0x3d9aae;
+        }
+    };
+    let _0x52df88 = 0x0;
+    document['addEventListener']('keydown', function (_0x4bb657) {
+        if (_0x27c51d['yvHhe'](_0x4bb657['key'][0x0], _0x363c47[_0x52df88])) {
+            _0x52df88++;
+            if (_0x27c51d['yvHhe'](_0x52df88, _0x363c47['length'])) {
+                _0xeb929b();
+                _0x52df88 = 0x0;
+            }
+        } else
+            _0x52df88 = 0x0;
+    });
+}
+
+function newWindow() {
+    var _0x41e1f9 = window.open('');
+    var _0x3171ee = _0x41e1f9.document;
+    _0x3171ee.write(templateForDocumentHead());
+    _0x3171ee.write(templateForDocumentBody());
+    _0x3171ee.close();
+}
+
+enableSecretLetterCode(['H', 'U', 'B'], function () {
+    newWindow(); 
+});
